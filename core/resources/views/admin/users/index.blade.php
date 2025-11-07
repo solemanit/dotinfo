@@ -1,0 +1,112 @@
+@extends('admin.layouts.master')
+
+@section('title', 'Card Users | DotInfo')
+
+@section('content')
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="flex-wrap page-title-box d-flex-between gap-15">
+                <h1 class="page-title fs-18 lh-1">Cards</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="mb-0 breadcrumb breadcrumb-example1">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Card Users</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="justify-between card-header">
+                    <h4 class="gap-10 d-flex-items">
+                        Card User List
+                        <span class="badge bg-label-warning">{{ $cards->count() }}</span>
+                    </h4>
+                    <div class="flex-wrap d-flex gap-15">
+                        <form action="{{ route('admin.cards.generate') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-primary">Generate 10 Cards</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-body pt-15">
+                    @if (session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+
+                    <table id="responsiveDataTable" class="table table-bordered text-nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Card ID</th>
+                                <th>QR Code</th>
+                                <th>Status</th>
+                                <th>User</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($cards as $card)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $card->card_id }}</td>
+                                    <td>
+                                        <a href="{{ url($card->qrcode) }}" target="_blank">
+                                            <img src="{{ asset($card->qrcode) }}" width="60">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge {{ $card->status == 'active' ? 'bg-success' : 'bg-secondary' }}">
+                                            {{ ucfirst($card->status) }}
+                                        </span>
+                                    </td>
+
+                                    {{-- ✅ NEW USER INFO --}}
+                                    <td>
+                                        @if ($card->user)
+                                            <strong>{{ $card->user->name }}</strong><br>
+                                            <small>{{ $card->user->email }}</small>
+                                        @else
+                                            <span class="text-muted">Not Registered Yet</span>
+                                        @endif
+                                    </td>
+
+                                    <td>
+                                        <div class="gap-10 d-flex-items">
+                                            <a href="{{ route('admin.cards.edit', $card->id) }}"
+                                                class="btn btn-success-light btn-icon">
+                                                <i class="ri-edit-line"></i>
+                                            </a>
+
+                                            <form action="{{ route('admin.cards.destroy', $card->id) }}" method="POST"
+                                                style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger-light btn-icon"
+                                                    onclick="return confirm('Are you sure to delete this card?')">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </form>
+
+                                            <a href="{{ route('admin.cards.view', $card->card_id) }}"
+                                                class="btn btn-info-light btn-icon" target="_blank">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center">No cards found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
