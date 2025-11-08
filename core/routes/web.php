@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\CardController;
 use App\Http\Controllers\Admin\CardUserController;
+use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Models\Card;
@@ -52,8 +53,7 @@ Route::middleware(['auth', 'admin'])
             Route::delete('/{id}', 'destroy')->name('destroy');
         });
 
-        // Card User
-        Route::get('/card-users', [CardUserController::class, 'index'])->name('card.users');
+        Route::resource('users', UserManagementController::class);
 });
 
 // User Routes

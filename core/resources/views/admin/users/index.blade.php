@@ -9,7 +9,7 @@
                 <h1 class="page-title fs-18 lh-1">Cards</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="mb-0 breadcrumb breadcrumb-example1">
-                        <li class="breadcrumb-item"><a href="javascript:void(0);">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Card Users</li>
                     </ol>
                 </nav>
@@ -18,17 +18,18 @@
 
         <div class="col-xl-12">
             <div class="card">
-                <div class="justify-between card-header">
+                <div class="justify-between card-header d-flex align-items-center">
                     <h4 class="gap-10 d-flex-items">
                         Card User List
-                        <span class="badge bg-label-warning">{{ $cards->count() }}</span>
+                        <span class="badge bg-label-warning">{{ $users->count() }}</span>
                     </h4>
-                    <div class="flex-wrap d-flex gap-15">
-                        <form action="{{ route('admin.cards.generate') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-primary">Generate 10 Cards</button>
-                        </form>
-                    </div>
+
+                    <form action="{{ route('admin.cards.generate') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="ri-add-fill"></i> Generate 10 Cards
+                        </button>
+                    </form>
                 </div>
 
                 <div class="card-body pt-15">
@@ -36,75 +37,72 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
 
-                    <table id="responsiveDataTable" class="table table-bordered text-nowrap w-100">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Card ID</th>
-                                <th>QR Code</th>
-                                <th>Status</th>
-                                <th>User</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($cards as $card)
+                    <div class="table-responsive">
+                        <table id="responsiveDataTable" class="table align-middle table-bordered">
+                            <thead class="table-light">
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $card->card_id }}</td>
-                                    <td>
-                                        <a href="{{ url($card->qrcode) }}" target="_blank">
-                                            <img src="{{ asset($card->qrcode) }}" width="60">
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="badge {{ $card->status == 'active' ? 'bg-success' : 'bg-secondary' }}">
-                                            {{ ucfirst($card->status) }}
-                                        </span>
-                                    </td>
+                                    <th>#</th>
+                                    <th>Card ID</th>
+                                    <th>Status</th>
+                                    <th>User Details</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
 
-                                    {{-- ✅ NEW USER INFO --}}
-                                    <td>
-                                        @if ($card->user)
-                                            <strong>{{ $card->user->name }}</strong><br>
-                                            <small>{{ $card->user->email }}</small>
-                                        @else
-                                            <span class="text-muted">Not Registered Yet</span>
-                                        @endif
-                                    </td>
+                            <tbody>
+                                @forelse ($users as $user)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
 
-                                    <td>
-                                        <div class="gap-10 d-flex-items">
-                                            <a href="{{ route('admin.cards.edit', $card->id) }}"
-                                                class="btn btn-success-light btn-icon">
+                                        <td class="fw-bold">{{ $user->card_id }}</td>
+
+                                        <td>
+                                            <span class="badge rounded-pill {{ $user->status === 'active' ? 'bg-success' : ($user->status ? 'bg-secondary' : 'bg-dark') }}">{{ $user->status ? ucfirst($user->status) : 'N/A' }}</span>
+                                        </td>
+
+
+                                        <td>
+                                            @if ($user->user)
+                                                <strong>{{ $user->user->name }}</strong><br>
+                                                <small>{{ $user->user->email }}</small><br>
+                                                <small class="text-success">Linked</small>
+                                            @else
+                                                <span class="text-muted">Not Assigned</span>
+                                            @endif
+                                        </td>
+
+                                        <td class="text-center">
+
+                                            <a href="{{ route('admin.users.show', $user->id) }}"
+                                                class="btn btn-info-light btn-icon" title="View" target="_blank">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
+
+                                            <a href="{{ route('admin.users.edit', $user->id) }}"
+                                                class="btn btn-success-light btn-icon" title="Edit">
                                                 <i class="ri-edit-line"></i>
                                             </a>
 
-                                            <form action="{{ route('admin.cards.destroy', $card->id) }}" method="POST"
-                                                style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
+                                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
+                                                class="d-inline">
+                                                @csrf @method('DELETE')
                                                 <button type="submit" class="btn btn-danger-light btn-icon"
-                                                    onclick="return confirm('Are you sure to delete this card?')">
+                                                    onclick="return confirm('Delete this card?')" title="Delete">
                                                     <i class="ri-delete-bin-line"></i>
                                                 </button>
                                             </form>
 
-                                            <a href="{{ route('admin.cards.view', $card->card_id) }}"
-                                                class="btn btn-info-light btn-icon" target="_blank">
-                                                <i class="ri-eye-line"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="text-center">No cards found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No cards available.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
 
-                    </table>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

@@ -54,8 +54,8 @@
                                     </li>
 
                                     <li class="slide">
-                                        <a href="{{ route('admin.card.users') }}"
-                                            class="sidebar-menu-item {{ request()->routeIs('admin.card.users') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.users.index') }}"
+                                            class="sidebar-menu-item {{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
                                             <div class="side-menu-icon">
                                                 <i class="ti ti-qrcode"></i>
                                             </div>
