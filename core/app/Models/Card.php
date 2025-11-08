@@ -48,4 +48,10 @@ class Card extends Model
     {
         return $this->status === 'inactive';
     }
+
+    public function digitalCard()
+    {
+        return $this->hasOne(DigitalCard::class);
+    }
+
 }

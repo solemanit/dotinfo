@@ -82,4 +82,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->isForeign() && !$this->hasVerifiedEmail();
     }
+
+    public function digitalCards()
+    {
+        return $this->hasMany(DigitalCard::class);
+    }
+
 }
