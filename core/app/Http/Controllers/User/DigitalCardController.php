@@ -43,10 +43,10 @@ class DigitalCardController extends Controller
                 'title' => 'nullable|string|max:255',
                 'photo' => 'nullable|string',
                 'website' => 'nullable|string|max:255',
-                'phone' => 'nullable|string|max:50',
+                'phone' => 'required|string|max:50',
                 'email' => 'nullable|email|max:255',
                 'whatsapp' => 'nullable|string|max:50',
-                'address' => 'nullable|string|max:500',
+                'address' => 'required|string|max:500',
                 'facebook' => 'nullable|string|max:255',
                 'instagram' => 'nullable|string|max:255',
                 'linkedin' => 'nullable|string|max:255',
@@ -76,49 +76,43 @@ class DigitalCardController extends Controller
                 ], 404);
             }
 
+            // Remove photo from request validation to prevent unintentional overwrite
+            unset($validated['photo']);
+
             // Handle base64 photo upload
             if ($request->photo && strpos($request->photo, 'data:image') === 0) {
                 try {
-                    // Delete old photo if exists
                     $existingCard = $user->digitalCards()->where('card_id', $card->id)->first();
+
+                    // Delete old photo only if new photo uploaded
                     if ($existingCard && $existingCard->photo) {
                         Storage::disk('public')->delete($existingCard->photo);
                         Log::info('Old photo deleted: ' . $existingCard->photo);
                     }
 
-                    // Generate unique filename
                     $photoName = 'digital_cards/profile_' . $user->id . '_' . time() . '.jpg';
 
-                    // Process image using Intervention Image
                     $image = Image::read($request->photo);
-
-                    // Resize to 300x300
                     $image->resize(300, 300, function ($constraint) {
                         $constraint->aspectRatio();
                         $constraint->upsize();
                     });
 
-                    // Encode to JPEG with 90% quality
                     $encodedImage = $image->encodeByExtension('jpg', 90);
-
-                    // Save to storage/app/public/digital_cards/
                     Storage::disk('public')->put($photoName, $encodedImage);
 
-                    // Store path in database (without 'storage/' prefix)
+                    // Set only when new photo exists
                     $validated['photo'] = $photoName;
 
                     Log::info('Image saved successfully: storage/app/public/' . $photoName);
-
                 } catch (\Exception $e) {
-                    Log::error('Image Upload Error: ' . $e->getMessage());
-                    Log::error('Stack trace: ' . $e->getTraceAsString());
-
                     return response()->json([
                         'success' => false,
                         'message' => 'Failed to upload image: ' . $e->getMessage()
                     ], 500);
                 }
             }
+
 
             $validated['user_id'] = $user->id;
             $validated['card_id'] = $card->id;
@@ -136,7 +130,6 @@ class DigitalCardController extends Controller
                 'message' => 'Digital card saved successfully',
                 'data' => $digitalCard
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
@@ -183,7 +176,6 @@ class DigitalCardController extends Controller
                 'success' => true,
                 'data' => $digitalCard
             ]);
-
         } catch (\Exception $e) {
             Log::error('Digital Card Get Error: ' . $e->getMessage());
 
