@@ -39,11 +39,13 @@
                     <table id="responsiveDataTable" class="table table-bordered text-nowrap w-100">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>#</th>
                                 <th>Card ID</th>
-                                <th>QR Code</th>
-                                <th>Status</th>
+                                <th>QR Code URL</th>
                                 <th>User</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -53,25 +55,43 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $card->card_id }}</td>
                                     <td>
-                                        <a href="{{ url($card->qrcode) }}" target="_blank">
-                                            <img src="{{ asset($card->qrcode) }}" width="60">
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="badge {{ $card->status == 'active' ? 'bg-success' : 'bg-secondary' }}">
-                                            {{ ucfirst($card->status) }}
-                                        </span>
+                                        <div class="gap-2 d-flex align-items-center">
+                                            <code class="copy-url" data-url="{{ url($card->card_id) }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Copy URL"
+                                                style="cursor:pointer;">
+                                                {{ url($card->card_id) }}
+                                            </code>
+
+                                        </div>
                                     </td>
 
-                                    {{-- ✅ NEW USER INFO --}}
+
                                     <td>
                                         @if ($card->user)
                                             <strong>{{ $card->user->name }}</strong><br>
-                                            <small>{{ $card->user->email }}</small>
+                                            <small><strong>Email:</strong> {{ $card->user->email ?? 'N/A' }}</small><br>
+                                            <small><strong>Mobile:</strong> {{ $card->user->mobile ?? 'N/A' }}</small><br>
                                         @else
                                             <span class="text-muted">Not Registered Yet</span>
                                         @endif
                                     </td>
+
+                                    <td>
+                                        @if ($card->user)
+                                            <small><strong>Country:</strong>
+                                                {{ $card->user->country_name ?? 'N/A' }}</small><br>
+                                            <small><strong>IP:</strong> {{ $card->user->registration_ip ?? 'N/A' }}</small>
+                                        @else
+                                            <span class="text-muted">Not Registered Yet</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge {{ $card->status == 'active' ? 'bg-success' : 'bg-secondary' }}">
+                                            {{ ucfirst($card->status) }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $card->created_at->format('d M, Y h:i A') }}</td>
 
                                     <td>
                                         <div class="gap-10 d-flex-items">
@@ -108,4 +128,39 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+
+                // Enable tooltip manually
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('.copy-url'));
+                var tooltips = tooltipTriggerList.map(function(element) {
+                    return new bootstrap.Tooltip(element, {
+                        trigger: 'manual'
+                    });
+                });
+
+                document.querySelectorAll('.copy-url').forEach(function(element) {
+                    element.addEventListener('click', function() {
+
+                        let text = this.getAttribute('data-url');
+                        navigator.clipboard.writeText(text);
+
+                        // Show tooltip
+                        let tooltip = bootstrap.Tooltip.getInstance(this);
+                        tooltip.show();
+
+                        // Hide tooltip after 1 second
+                        setTimeout(() => {
+                            tooltip.hide();
+                        }, 1000);
+
+                    });
+                });
+
+            });
+        </script>
+    @endpush
+
 @endsection

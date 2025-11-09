@@ -74,7 +74,8 @@ Route::middleware(['auth', 'user'])
 
 Route::fallback(fn () => redirect()->route('login')->with('error', 'Page not found or access denied.'));
 
-Route::get('/view/{card_id}', function ($card_id) {
+// QrCode Card View Route
+Route::get('/{card_id}', function ($card_id) {
     abort_unless(preg_match('/^[0-9]{4}$/', $card_id), 404);
 
     $card = Card::where('card_id', $card_id)->firstOrFail();
