@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\CardController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\User\DigitalCardController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Models\Card;
@@ -53,7 +54,7 @@ Route::middleware(['auth', 'admin'])
         });
 
         Route::resource('users', UserManagementController::class);
-});
+    });
 
 // User Routes
 Route::middleware(['auth', 'user'])
@@ -61,7 +62,7 @@ Route::middleware(['auth', 'user'])
     ->name('user.')
     ->group(function () {
 
-        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+        //Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 
         // Profile
         Route::controller(UserProfileController::class)->prefix('profile')->name('profile.')->group(function () {
@@ -70,12 +71,21 @@ Route::middleware(['auth', 'user'])
             Route::put('/password', 'updatePassword')->name('password');
             Route::delete('/', 'destroy')->name('destroy');
         });
+
+        // Digital Card
+        Route::get('/dashboard', [DigitalCardController::class, 'show'])
+            ->name('dashboard');
+
+        Route::post('/digital-card/store', [DigitalCardController::class, 'store'])
+            ->name('digital-card.store');
+
+        Route::get('/digital-card/get', [DigitalCardController::class, 'get'])
+            ->name('digital-card.get');
     });
 
-Route::fallback(fn () => redirect()->route('login')->with('error', 'Page not found or access denied.'));
+Route::fallback(fn() => redirect()->route('login')->with('error', 'Page not found or access denied.'));
 
-// QrCode Card View Route
-Route::get('/{card_id}', function ($card_id) {
+Route::get('/view/{card_id}', function ($card_id) {
     abort_unless(preg_match('/^[0-9]{4}$/', $card_id), 404);
 
     $card = Card::where('card_id', $card_id)->firstOrFail();

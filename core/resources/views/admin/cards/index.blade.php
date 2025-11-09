@@ -45,7 +45,7 @@
                                 <th>User</th>
                                 <th>Location</th>
                                 <th>Status</th>
-                                <th>Date</th>
+                                <th>Created At</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -56,10 +56,10 @@
                                     <td>{{ $card->card_id }}</td>
                                     <td>
                                         <div class="gap-2 d-flex align-items-center">
-                                            <code class="copy-url" data-url="{{ url($card->card_id) }}"
+                                            <code class="copy-url" data-url="{{ url('view/'.$card->card_id) }}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Copy URL"
                                                 style="cursor:pointer;">
-                                                {{ url($card->card_id) }}
+                                                {{ url('view/'.$card->card_id) }}
                                             </code>
 
                                         </div>
@@ -70,7 +70,7 @@
                                         @if ($card->user)
                                             <strong>{{ $card->user->name }}</strong><br>
                                             <small><strong>Email:</strong> {{ $card->user->email ?? 'N/A' }}</small><br>
-                                            <small><strong>Mobile:</strong> {{ $card->user->mobile ?? 'N/A' }}</small><br>
+                                            <small><strong>Mobile:</strong> {{ $card->user->mobile ?? 'N/A' }}</small>
                                         @else
                                             <span class="text-muted">Not Registered Yet</span>
                                         @endif
@@ -80,7 +80,8 @@
                                         @if ($card->user)
                                             <small><strong>Country:</strong>
                                                 {{ $card->user->country_name ?? 'N/A' }}</small><br>
-                                            <small><strong>IP:</strong> {{ $card->user->registration_ip ?? 'N/A' }}</small>
+                                            <small><strong>IP:</strong> {{ $card->user->registration_ip ?? 'N/A' }}</small><br>
+                                            <small><strong>Registration:</strong> {{ $card->user->created_at ? $card->user->created_at->format('d M, Y h:i A') : 'N/A' }}</small>
                                         @else
                                             <span class="text-muted">Not Registered Yet</span>
                                         @endif
