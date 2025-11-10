@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="public-card-url" content="{{ route('public.card.data', ['card_id' => $card_id]) }}">
+    <meta name="default-avatar" content="{{ asset('assets/images/avatar/dummy.png') }}">
     <meta name="storage-path" content="{{ asset('storage') }}">
     <title>Digital Business Card</title>
 
@@ -177,7 +178,7 @@
 
         <div class="relative flex flex-col items-center px-6 pt-24 pb-6 bg-gradient-to-b from-gray-700 via-gray-900 to-black">
             <div class="-mt-10 overflow-hidden border-4 border-white rounded-full shadow-lg w-45 h-45">
-                <img id="profilePhoto" src="https://via.placeholder.com/300" alt="Profile"
+                <img id="profilePhoto" src="{{ asset('assets/images/avatar/dummy.png') }}" alt="Profile"
                     class="object-cover w-full h-full">
             </div>
             <div class="mt-4 text-center">

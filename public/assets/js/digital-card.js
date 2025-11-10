@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let hasData = false;
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const storagePath = document.querySelector('meta[name="storage-path"]').getAttribute('content');
+    const defaultAvatar = document.querySelector('meta[name="default-avatar"]').getAttribute('content');
     // ================== Load Card Data ==================
     async function loadCardData() {
         try {
@@ -20,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cardData = {
                     name: result.data.name || '',
                     title: result.data.title || '',
-                    photo: result.data.photo ? storagePath + '/' + result.data.photo : 'https://via.placeholder.com/300',
+                    photo: result.data.photo ? storagePath + '/' + result.data.photo : defaultAvatar,
                     social: {
                         facebook: result.data.facebook || '',
                         instagram: result.data.instagram || '',
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cardData = {
                     name: 'Your Name',
                     title: '',
-                    photo: 'https://via.placeholder.com/300',
+                    photo: defaultAvatar,
                     social: {
                         facebook: '',
                         instagram: '',
@@ -473,6 +474,37 @@ END:VCARD`;
     // ================== Initialize ==================
     initCard();
 
+    // ================== Logout Function ==================
+    async function logoutUser() {
+        try {
+            const response = await fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                // লগআউট হলে লগইন পেজে রিডিরেক্ট
+                window.location.href = '/login';
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Logout failed. Please try again.'
+                });
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while logging out.'
+            });
+        }
+    }
+
     // ================== Expose functions globally ==================
     window.openEditModal = openEditModal;
     window.closeEditModal = closeEditModal;
@@ -481,5 +513,6 @@ END:VCARD`;
     window.openCropModal = openCropModal;
     window.cropImage = cropImage;
     window.closeCropModal = closeCropModal;
+    window.logoutUser = logoutUser;
 
 });

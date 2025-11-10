@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="digital-card-get" content="{{ route('user.digital-card.get') }}">
     <meta name="storage-path" content="{{ asset('storage') }}">
+    <meta name="default-avatar" content="{{ asset('assets/images/avatar/dummy.png') }}">
     <title>Digital Business Card</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -41,15 +42,15 @@
             class="fixed z-50 flex items-center gap-2 px-4 py-2 text-sm transition rounded-lg shadow-lg text-dark-900 top-4 left-4 bg-white/90 backdrop-blur-sm hover:bg-white">
             <i class="fas fa-edit"></i> Edit
         </button>
-        <button onclick="shareCard()"
+        <button onclick="logoutUser()"
             class="fixed z-50 px-4 py-2 text-sm transition rounded-lg shadow-lg text-dark-900 top-4 right-4 bg-white/90 backdrop-blur-sm hover:bg-white">
-            <i class="fas fa-share-alt"></i> Share
+            <i class="fas fa-sign-out-alt"></i> Logout
         </button>
 
         <div
             class="relative flex flex-col items-center px-6 pt-24 pb-6 bg-gradient-to-b from-gray-700 via-gray-900 to-black">
             <div class="-mt-10 overflow-hidden border-4 border-white rounded-full shadow-lg w-45 h-45">
-                <img id="profilePhoto" src="https://via.placeholder.com/300" alt="Profile"
+                <img id="profilePhoto" src="{{ asset('assets/images/avatar/dummy.png') }}" alt="Profile"
                     class="object-cover w-full h-full">
             </div>
             <div class="mt-4 text-center">
@@ -132,7 +133,8 @@
                 </div>
                 <div>
                     <label for="editEmail" class="block mb-1 text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="editEmail" placeholder="Email" class="w-full px-4 py-2 border rounded-lg">
+                    <input type="email" id="editEmail" placeholder="Email"
+                        class="w-full px-4 py-2 border rounded-lg">
                 </div>
                 <div>
                     <label for="editWhatsapp" class="block mb-1 text-sm font-medium text-gray-700">WhatsApp</label>

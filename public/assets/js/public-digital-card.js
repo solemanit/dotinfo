@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const publicApi = document.querySelector('meta[name="public-card-url"]').getAttribute('content');
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const storagePath = document.querySelector('meta[name="storage-path"]').getAttribute('content');
-
+    const defaultAvatar = document.querySelector('meta[name="default-avatar"]').getAttribute('content');
     const splashScreen = document.getElementById('splashScreen');
     const loadingState = document.getElementById('loadingState');
     const cardContent = document.getElementById('cardContent');
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cardData = {
                     name: result.data.name || 'Your Name',
                     title: result.data.title || '',
-                    photo: result.data.photo ? storagePath + '/' + result.data.photo : 'https://via.placeholder.com/300',
+                    photo: result.data.photo ? storagePath + '/' + result.data.photo : defaultAvatar,
                     social: {
                         facebook: result.data.facebook || '',
                         instagram: result.data.instagram || '',
