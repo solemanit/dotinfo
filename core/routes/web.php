@@ -83,25 +83,24 @@ Route::middleware(['auth', 'user'])
             ->name('digital-card.get');
     });
 
-Route::fallback(fn() => redirect()->route('login')->with('error', 'Page not found or access denied.'));
-
+// HTML page route
 Route::get('/view/{card_id}', function ($card_id) {
     abort_unless(preg_match('/^[0-9]{4}$/', $card_id), 404);
-
     $card = Card::where('card_id', $card_id)->firstOrFail();
 
-    // If card inactive → redirect to register with session
     if ($card->status == 'inactive') {
         session(['qr_card_id' => $card_id]);
         return redirect()->route('register')->with('info', 'Please complete registration.');
     }
 
-    // If card active → Show user's public data
-    if ($card->status == 'active' && $card->user) {
-        return view('user-view', ['user' => $card->user]);
-    }
-
+    return view('user-view', ['card_id' => $card_id]);
     abort(404);
-});
+})->name('public.card.view');
+
+// API endpoint
+Route::get('/api/card/{card_id}', [DigitalCardController::class, 'publicShow'])
+    ->name('public.card.data');
+
+Route::fallback(fn() => redirect()->route('login')->with('error', 'Page not found or access denied.'));
 
 require __DIR__ . '/auth.php';

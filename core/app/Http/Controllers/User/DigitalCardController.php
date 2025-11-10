@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Card;
 use App\Models\DigitalCard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -185,5 +186,31 @@ class DigitalCardController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function publicShow($card_id)
+    {
+        abort_unless(preg_match('/^[0-9]{4}$/', $card_id), 404);
+
+        $card = Card::where('card_id', $card_id)->firstOrFail();
+
+        if ($card->status == 'inactive') {
+            return response()->json([
+                'success' => false,
+                'status' => 'inactive',
+                'message' => 'User registration required.'
+            ]);
+        }
+
+        $digitalCard = DigitalCard::where('card_id', $card->id)->first();
+
+        if (!$digitalCard) {
+            return response()->json(['success' => false, 'message' => 'No card data found'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $digitalCard
+        ]);
     }
 }
