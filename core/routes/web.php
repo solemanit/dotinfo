@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\CardController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\User\DigitalCardController;
-use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Models\Card;
 
@@ -56,14 +55,11 @@ Route::middleware(['auth', 'admin'])
         Route::resource('users', UserManagementController::class);
     });
 
-// User Routes
-Route::middleware(['auth', 'user'])
+// User Routes (মোবাইল এক্সেসের জন্য সীমাবদ্ধ)
+Route::middleware(['auth', 'user', 'mobile'])
     ->prefix('user')
     ->name('user.')
     ->group(function () {
-
-        //Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
-
         // Profile
         Route::controller(UserProfileController::class)->prefix('profile')->name('profile.')->group(function () {
             Route::get('/', 'edit')->name('edit');
@@ -83,23 +79,24 @@ Route::middleware(['auth', 'user'])
             ->name('digital-card.get');
     });
 
-// HTML page route
-Route::get('/view/{card_id}', function ($card_id) {
-    abort_unless(preg_match('/^[0-9]{4}$/', $card_id), 404);
-    $card = Card::where('card_id', $card_id)->firstOrFail();
+// HTML page route (public view) – শুধুমাত্র মোবাইল
+Route::middleware(['mobile'])->group(function () {
+    Route::get('/view/{card_id}', function ($card_id) {
+        abort_unless(preg_match('/^[0-9]{4}$/', $card_id), 404);
+        $card = Card::where('card_id', $card_id)->firstOrFail();
 
-    if ($card->status == 'inactive') {
-        session(['qr_card_id' => $card_id]);
-        return redirect()->route('register')->with('info', 'Please complete registration.');
-    }
+        if ($card->status == 'inactive') {
+            session(['qr_card_id' => $card_id]);
+            return redirect()->route('register')->with('info', 'Please complete registration.');
+        }
 
-    return view('user-view', ['card_id' => $card_id]);
-    abort(404);
-})->name('public.card.view');
+        return view('user-view', ['card_id' => $card_id]);
+    })->name('public.card.view');
 
-// API endpoint
-Route::get('/api/card/{card_id}', [DigitalCardController::class, 'publicShow'])
-    ->name('public.card.data');
+    // API endpoint
+    Route::get('/api/card/{card_id}', [DigitalCardController::class, 'publicShow'])
+        ->name('public.card.data');
+});
 
 Route::fallback(fn() => redirect()->route('login')->with('error', 'Page not found or access denied.'));
 
