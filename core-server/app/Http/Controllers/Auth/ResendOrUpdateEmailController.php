@@ -13,11 +13,6 @@ class ResendOrUpdateEmailController extends Controller
     public function __invoke(Request $request)
     {
         $user = $request->user();
-
-        $request->validate([
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-        ]);
-
         $newEmail = trim($request->input('email'));
 
         if ($newEmail !== $user->email) {

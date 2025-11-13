@@ -1,97 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Email</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verification</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
 </head>
-<body class="font-sans bg-gray-100">
 
-    <div class="max-w-md mx-auto mt-10">
+<body class="text-gray-800 bg-gray-50">
 
-        <!-- Header -->
-        <div class="mb-6 text-center">
-            <h2 class="text-2xl font-bold text-gray-800">Verify Your Email</h2>
-            <p class="mt-2 text-sm font-semibold text-orange-600">
-                Email verification is required for international users.
+    <div class="flex flex-col items-center justify-center min-h-screen px-4 py-8">
+
+        <div class="max-w-xl px-5 mb-5 text-center">
+            <h2 class="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl">Check Your Inbox</h2>
+            <p class="text-gray-600">
+                We’ve sent a verification link to
+                <p class="font-semibold text-gray-900">{{ auth()->user()->email }}</p>.
+                Please check your inbox and also your spam folder.
             </p>
         </div>
 
-        <!-- Messages -->
-        @if(session('success'))
-            <div class="p-4 mb-4 border border-green-200 rounded-lg bg-green-50">
-                <p class="text-sm text-green-700">✓ {{ session('success') }}</p>
-            </div>
-        @endif
+        <div class="w-full max-w-md p-8 bg-white border border-gray-200 shadow-sm rounded-2xl">
 
-        @if(session('email-updated'))
-            <div class="p-4 mb-4 border border-green-200 rounded-lg bg-green-50">
-                <p class="text-sm text-green-700">✓ {{ session('email-updated') }}</p>
-            </div>
-        @endif
+            <!-- Flash Messages -->
+            @foreach (['success', 'info', 'error'] as $msg)
+                @if (session($msg))
+                    <div
+                        class="p-3 mb-4 text-sm text-white {{ $msg == 'success' ? 'bg-green-500' : ($msg == 'info' ? 'bg-blue-500' : 'bg-red-500') }} rounded-lg">
+                        {{ session($msg) }}
+                    </div>
+                @endif
+            @endforeach
 
-        @if(session('info'))
-            <div class="p-4 mb-4 border border-blue-200 rounded-lg bg-blue-50">
-                <p class="text-sm text-blue-700">ℹ {{ session('info') }}</p>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="p-4 mb-4 border border-red-200 rounded-lg bg-red-50">
-                <p class="text-sm text-red-700">✗ {{ session('error') }}</p>
-            </div>
-        @endif
-
-        <!-- Current Email -->
-        <div class="p-4 mb-6 border border-blue-200 rounded-lg bg-blue-50">
-            <p class="text-sm text-gray-700">Current email:</p>
-            <p class="mt-1 text-base font-semibold text-gray-900">{{ auth()->user()->email }}</p>
-        </div>
-
-        <!-- Change Email Form -->
-        <div class="p-6 mb-6 bg-white border border-gray-200 rounded-lg">
-            <h3 class="mb-4 text-lg font-semibold text-gray-800">Change Email Address</h3>
-            <form method="POST" action="{{ route('verification.update-email') }}">
+            <form method="POST" action="{{ route('verification.resend-or-update') }}">
                 @csrf
-                @method('PUT')
                 <div class="mb-4">
-                    <label for="email" class="block mb-2 text-sm font-medium text-gray-700">New Email Address</label>
-                    <input
-                        id="email"
-                        type="email"
-                        name="email"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        required
-                        placeholder="Enter new email address"
-                    />
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email Address</label>
+                    <input id="email" type="email" name="email"
+                        value="{{ old('email', auth()->user()->email) }}" required placeholder="Enter email address"
+                        class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    <p class="mt-1 text-xs text-gray-500">
+                        Leave unchanged to resend verification or enter a new email to update & resend.
+                    </p>
+                    @error('email')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
-                <button type="submit" class="w-full px-4 py-2 font-semibold text-white transition duration-200 bg-blue-600 rounded-lg hover:bg-blue-700">
-                    Update Email & Send Verification
-                </button>
-            </form>
-        </div>
 
-        <!-- Resend Verification & Logout -->
-        <div class="flex flex-col gap-4">
-            <!-- Resend Verification -->
-            <form method="POST" action="{{ route('verification.send') }}">
-                @csrf
-                <button type="submit" class="w-full px-4 py-2 font-semibold text-white transition duration-200 bg-gray-600 rounded-lg hover:bg-gray-700">
-                    Resend Verification Email
+                <button type="submit"
+                    class="w-full px-4 py-2 mt-2 font-semibold text-gray-200 bg-gray-700 rounded-lg hover:bg-gray-600 focus:ring-2 focus:ring-gray-500 focus:outline-none">
+                    Resend mail
                 </button>
+
             </form>
 
-            <!-- Logout -->
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('logout') }}" class="mt-4">
                 @csrf
-                <button type="submit" class="w-full px-4 py-2 font-semibold text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100">
-                    Log Out
+                <button type="submit"
+                    class="w-full px-4 py-2 font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 focus:outline-none">
+                    Logout
                 </button>
             </form>
         </div>
 
     </div>
-
 </body>
+
 </html>

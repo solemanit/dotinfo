@@ -140,15 +140,16 @@ class RegisteredUserController extends Controller
         try {
             $user = User::create([
                 'name' => $registrationData['name'],
-                'mobile' => $registrationData['mobile'],
-                'email' => $registrationData['email'],
+                'login_mobile' => $registrationData['mobile'], // লগইন এর জন্য মূল
+                'mobile' => $registrationData['mobile'],       // optional profile
+                'login_email' => $registrationData['email'],   // লগইন এর জন্য মূল
+                'email' => $registrationData['email'],         // optional profile
                 'password' => Hash::make($registrationData['password']),
                 'role' => 'user',
                 'is_active' => true,
-                // ✅ Country info যোগ করুন
-                'country_code' => session('user_country_code'),
-                'country_name' => session('user_country_name'),
-                'registration_ip' => session('user_ip'),
+                'country_code' => session('user_country_code') ?? 'BD',
+                'country_name' => session('user_country_name') ?? 'Bangladesh',
+                'registration_ip' => session('user_ip') ?? request()->ip(),
             ]);
 
             // ✅ BD User → Direct Email Verified

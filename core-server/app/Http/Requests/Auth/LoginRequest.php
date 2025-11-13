@@ -46,9 +46,9 @@ class LoginRequest extends FormRequest
         if ($isBdUser) {
             // বাংলাদেশ → email or 11-digit mobile allowed
             if (preg_match('/^\d{11}$/', $loginInput)) {
-                $loginField = 'mobile';
+                $loginField = 'login_mobile';
             } elseif (str_contains($loginInput, '@')) {
-                $loginField = 'email';
+                $loginField = 'login_email';
             } else {
                 throw ValidationException::withMessages([
                     'login' => 'Please enter a valid 11-digit mobile number or email address.',
@@ -61,7 +61,7 @@ class LoginRequest extends FormRequest
                     'login' => 'Only email login is allowed from your region.',
                 ]);
             }
-            $loginField = 'email';
+            $loginField = 'login_email';
         }
 
         $credentials = [

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\CardController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Auth\ResendOrUpdateEmailController;
 use App\Http\Controllers\User\DigitalCardController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Models\Card;
@@ -99,5 +100,10 @@ Route::middleware(['auth', 'user'])
 //});
 
 Route::fallback(fn() => redirect()->route('login')->with('error', 'Page not found or access denied.'));
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/email/resend-or-update', ResendOrUpdateEmailController::class)
+        ->name('verification.resend-or-update');
+});
 
 require __DIR__ . '/auth.php';
