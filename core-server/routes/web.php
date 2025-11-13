@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\CardController;
 use App\Http\Controllers\Admin\UserManagementController;
-use App\Http\Controllers\Auth\ResendOrUpdateEmailController;
 use App\Http\Controllers\User\DigitalCardController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Models\Card;
@@ -91,7 +90,7 @@ Route::middleware(['auth', 'user'])
             return redirect()->route('register')->with('info', 'Please complete registration.');
         }
 
-        return view('user-view', ['card_id' => $card_id]);
+        return view('user.public-view', ['card_id' => $card_id]);
     })->name('public.card.view');
 
     // API endpoint
@@ -101,9 +100,7 @@ Route::middleware(['auth', 'user'])
 
 Route::fallback(fn() => redirect()->route('login')->with('error', 'Page not found or access denied.'));
 
-Route::middleware(['auth'])->group(function () {
-    Route::post('/email/resend-or-update', ResendOrUpdateEmailController::class)
-        ->name('verification.resend-or-update');
-});
+// verify email template
+Route::view('/verify-email-template', 'emails.verify-email')->name('verify-email.template');
 
 require __DIR__ . '/auth.php';

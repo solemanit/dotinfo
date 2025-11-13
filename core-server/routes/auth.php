@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredForeignUserController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\ResendOrUpdateEmailController;
 use App\Http\Controllers\Auth\UpdateEmailController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Http\Request;
@@ -76,9 +77,8 @@ Route::middleware('auth')->group(function () {
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
-    // Update email
-    Route::put('update-email', [UpdateEmailController::class, 'update'])
-        ->name('verification.update-email');
+    Route::post('/email/resend-or-update', ResendOrUpdateEmailController::class)
+        ->name('verification.resend-or-update');
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
         ->name('password.confirm');
