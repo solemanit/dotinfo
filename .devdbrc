@@ -1,6 +1,6 @@
 [
   {
     "type": "sqlite",
-    "path": "c:\\Users\\infos\\Herd\\dotinfo\\core\\database\\database.sqlite"
+    "path": "c:\\Users\\infos\\Herd\\dotinfo\\core-server\\database\\database.sqlite"
   }
 ]
