@@ -3,8 +3,6 @@
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CheckAllowedCountry;
 use App\Http\Middleware\EnsureEmailIsVerifiedForForeignUsers;
-use App\Http\Middleware\LogUserActivity;
-use App\Http\Middleware\MobileOnly;
 use App\Http\Middleware\UserMiddleware;
 use Fahlisaputra\Minify\Middleware\MinifyCss;
 use Fahlisaputra\Minify\Middleware\MinifyHtml;
@@ -25,7 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'user' => UserMiddleware::class,
             'check.country' => CheckAllowedCountry::class,
             'foreign.verified' => EnsureEmailIsVerifiedForForeignUsers::class,
-            'mobile' => MobileOnly::class,
         ]);
 
         $middleware->web(append: [

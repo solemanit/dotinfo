@@ -61,4 +61,14 @@
 
 @push('scripts')
 <script src="{{ asset('main/js/public-digital-card.js') }}"></script>
+<script src="{{ asset('main/js/mobile-detect.min.js') }}"></script>
+<script>
+    var md = new MobileDetect(window.navigator.userAgent);
+
+    // If NOT mobile (means desktop/tablet), block or redirect
+    if (!md.mobile()) {
+        // Option 1: Redirect desktop users
+        window.location.href = "https://www.dotinfo.app/";
+    }
+</script>
 @endpush
