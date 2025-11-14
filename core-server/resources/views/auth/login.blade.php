@@ -63,7 +63,7 @@
 
                 {{-- Submit --}}
                 <button type="submit"
-                    class="flex items-center justify-center w-full gap-2 py-3 font-medium text-white transition bg-gray-900 rounded-lg hover:bg-gray-800">
+                    class="flex items-center justify-center w-full gap-2 py-3 font-medium text-white transition bg-gray-900 rounded-lg cursor-pointer hover:bg-gray-800">
                     <span>Sign In<i class="ml-2 fa-regular fa-arrow-right"></i></span>
                 </button>
             </form>
