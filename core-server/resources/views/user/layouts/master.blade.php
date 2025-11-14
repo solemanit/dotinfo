@@ -12,8 +12,10 @@
     @stack('meta')
 
     <title>@yield('title', 'Digital Business Card')</title>
-
+    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     {{-- Common Styles --}}
+    {{-- <link rel="stylesheet" href="{{asset('main/css/main.css') }}"> --}}
+    {{-- <link rel="stylesheet" href="{{ asset('main/css/app-DB9vQn9H.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('main/css/icons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('main/css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('main/css/fonts.css') }}">
@@ -35,6 +37,7 @@
 
     {{-- Page Specific Scripts --}}
     @stack('scripts')
-<script src="{{ asset('main/js/browser@4.js') }}"></script>
+    {{-- <script src="{{ asset('main/js/browser@4.js') }}"></script> --}}
+    {{-- <script src="{{ asset('main/js/app-ByW0VTRm.js') }}"></script> --}}
 </body>
 </html>

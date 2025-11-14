@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
     <title>@yield('title', 'Digital Business Card')</title>
 
     {{-- Common Styles --}}
+    <link rel="stylesheet" href="{{ asset('main/css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('main/css/icons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('main/css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('main/css/fonts.css') }}">
@@ -33,6 +35,7 @@
 
     {{-- Page Specific Scripts --}}
     @stack('scripts')
-<script src="{{ asset('main/js/browser@4.js') }}"></script>
+    <script src="{{ asset('main/js/browser@4.js') }}"></script>
 </body>
+
 </html>
