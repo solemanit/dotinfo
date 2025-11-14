@@ -1,11 +1,9 @@
 @extends('user.layouts.master')
 
-@section('title', 'Public Digital Card')
+@section('title', 'Profile Card')
 
 @push('meta')
 <meta name="public-card-url" content="{{ route('public.card.data', ['card_id' => $card_id]) }}">
-<meta name="default-avatar" content="{{ asset('assets/images/avatar/dummy.png') }}">
-<meta name="storage-path" content="{{ asset('storage') }}">
 @endpush
 
 @section('content')
@@ -63,5 +61,4 @@
 
 @push('scripts')
 <script src="{{ asset('main/js/public-digital-card.js') }}"></script>
-<script src="{{ asset('main/js/browser@4.js') }}"></script>
 @endpush

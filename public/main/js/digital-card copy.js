@@ -303,6 +303,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ================== Save vCard (Full Version with Compressed Photo) ==================
   async function saveContact() {
+    // ছবি compress করে base64-এ convert করা
     let photoData = "";
     try {
       const img = new Image();
@@ -310,13 +311,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       await new Promise((resolve, reject) => {
         img.onload = () => {
+          // Canvas তৈরি করা
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
 
+          // ছবির size কমানো (max 200x200 - vCard এর জন্য ideal)
           const maxSize = 200;
           let width = img.width;
           let height = img.height;
 
+          // Aspect ratio maintain করে resize
           if (width > height) {
             if (width > maxSize) {
               height = (height * maxSize) / width;
@@ -332,11 +336,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           canvas.width = width;
           canvas.height = height;
 
+          // ছবি draw করা
           ctx.drawImage(img, 0, 0, width, height);
 
+          // Compressed JPEG হিসেবে convert (quality 0.8 = 80%)
           const dataURL = canvas.toDataURL("image/jpeg", 0.8);
           const base64 = dataURL.split(",")[1];
 
+          // vCard standard format (74 character per line)
           photoData = base64.match(/.{1,74}/g).join("\r\n ");
 
           resolve();
@@ -347,6 +354,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           reject();
         };
 
+        // Image load করা
         if (cardData.photo.startsWith("data:")) {
           img.src = cardData.photo;
         } else {
@@ -358,21 +366,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       photoData = "";
     }
 
+    // vCard তৈরি করা - সঠিক ফরম্যাটে
     const vCardParts = [
       "BEGIN:VCARD",
       "VERSION:3.0",
+      // নাম - N field প্রথমে (Last;First;Middle;Prefix;Suffix)
       `N;CHARSET=utf-8:${cardData.name};;;;`,
+      // Full Name
       `FN;CHARSET=utf-8:${cardData.name}`,
+      // Designation/Title
       cardData.designation ? `TITLE;CHARSET=utf-8:${cardData.designation}` : "",
+      // Company/Organization
       cardData.company ? `ORG;CHARSET=utf-8:${cardData.company}` : "",
+      // Email
       cardData.contact.email ? `EMAIL;INTERNET:${cardData.contact.email}` : "",
+      // Mobile (PREF দিয়ে preferred number mark করা)
       cardData.contact.mobile ? `TEL;PREF:${cardData.contact.mobile}` : "",
+      // Website
       cardData.contact.website
         ? `URL;TYPE=Home Page:${cardData.contact.website}`
         : "",
+      // Address
       cardData.contact.address
         ? `ADR;TYPE=WORK;CHARSET=utf-8:;;${cardData.contact.address};;;;`
         : "",
+      // Social Media URLs - সঠিক ফরম্যাটে
       cardData.social.facebook
         ? `URL;TYPE=Facebook:${cardData.social.facebook}`
         : "",
@@ -405,12 +423,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         ? `URL;TYPE=Snapchat:${cardData.social.snapchat}`
         : "",
       cardData.social.github ? `URL;TYPE=GitHub:${cardData.social.github}` : "",
+      // Photo - সঠিক ফরম্যাটে
       photoData ? `PHOTO;ENCODING=b;TYPE=image/jpeg:${photoData}` : "",
       "END:VCARD",
     ];
 
+    // খালি লাইন বাদ দিয়ে vCard তৈরি
     const vCard = vCardParts.filter(Boolean).join("\r\n");
 
+    // VCF file download করা
     const blob = new Blob([vCard], { type: "text/vcard;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -421,6 +442,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
+    // সফল হলে notification দেখানো
     Swal.fire({
       icon: "success",
       title: "Success!",
@@ -450,6 +472,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function openEditModal() {
     const modal = document.getElementById("editModal");
 
+    // আগের মতো data ফিল্ড ফিল করা
     const inputs = [
       "Name",
       "Designation",
@@ -484,19 +507,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
+    // Required message check
     if (!cardData.name || !cardData.contact.mobile || !cardData.contact.address)
       document.getElementById("requiredMessage").classList.remove("hidden");
     else document.getElementById("requiredMessage").classList.add("hidden");
 
+    // Show modal
     modal.classList.remove("hidden");
     modal.classList.add("flex");
 
+    // Add backdrop (same as change photo modal)
     let backdrop = document.createElement("div");
     backdrop.id = "editModalBackdrop";
     backdrop.className =
       "fixed inset-0 z-40 transition-opacity duration-300 bg-black bg-opacity-50 opacity-0 backdrop-blur-sm";
     document.body.appendChild(backdrop);
 
+    // Fade-in effect
     requestAnimationFrame(() => {
       backdrop.classList.add("opacity-100");
     });
@@ -506,6 +533,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const modal = document.getElementById("editModal");
     const backdrop = document.getElementById("editModalBackdrop");
 
+    // Fade-out animation (same as change photo)
     if (backdrop) {
       backdrop.classList.remove("opacity-100");
       backdrop.classList.add("opacity-0");
@@ -514,168 +542,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     modal.classList.add("hidden");
     modal.classList.remove("flex");
-  }
-
-  // ================== Security Modal ==================
-  function openSecurityModal() {
-    const modal = document.getElementById("securityModal");
-
-    // Clear form fields
-    document.getElementById("securityLoginMobile").value = "";
-    document.getElementById("securityLoginEmail").value = "";
-    document.getElementById("securityCurrentPassword").value = "";
-    document.getElementById("securityNewPassword").value = "";
-    document.getElementById("securityConfirmPassword").value = "";
-
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-
-    let backdrop = document.createElement("div");
-    backdrop.id = "securityModalBackdrop";
-    backdrop.className =
-      "fixed inset-0 z-40 transition-opacity duration-300 bg-black bg-opacity-50 opacity-0 backdrop-blur-sm";
-    document.body.appendChild(backdrop);
-
-    requestAnimationFrame(() => {
-      backdrop.classList.add("opacity-100");
-    });
-  }
-
-  function closeSecurityModal() {
-    const modal = document.getElementById("securityModal");
-    const backdrop = document.getElementById("securityModalBackdrop");
-
-    if (backdrop) {
-      backdrop.classList.remove("opacity-100");
-      backdrop.classList.add("opacity-0");
-      setTimeout(() => backdrop.remove(), 300);
-    }
-
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
-  }
-
-  // ================== Update Security Settings ==================
-  async function updateSecuritySettings(e) {
-    e.preventDefault();
-
-    const loginMobile = document.getElementById("securityLoginMobile").value.trim();
-    const loginEmail = document.getElementById("securityLoginEmail").value.trim();
-    const currentPassword = document.getElementById("securityCurrentPassword").value;
-    const newPassword = document.getElementById("securityNewPassword").value;
-    const confirmPassword = document.getElementById("securityConfirmPassword").value;
-
-    // Validation
-    if (!loginMobile && !loginEmail) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Please provide at least Login Mobile or Login Email",
-      });
-      return;
-    }
-
-    if (loginMobile) {
-      const pattern = /^\+\d{1,4}\d{6,14}$/;
-      if (!pattern.test(loginMobile)) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Login Mobile must include country code and be valid",
-        });
-        return;
-      }
-    }
-
-    if (loginEmail) {
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(loginEmail)) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Please enter a valid email address",
-        });
-        return;
-      }
-    }
-
-    if (newPassword || confirmPassword) {
-      if (!currentPassword) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Current password is required to set a new password",
-        });
-        return;
-      }
-
-      if (newPassword.length < 6) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "New password must be at least 6 characters",
-        });
-        return;
-      }
-
-      if (newPassword !== confirmPassword) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "New password and confirm password do not match",
-        });
-        return;
-      }
-    }
-
-    // Prepare data
-    const data = {
-      login_mobile: loginMobile || null,
-      login_email: loginEmail || null,
-    };
-
-    if (currentPassword && newPassword) {
-      data.current_password = currentPassword;
-      data.password = newPassword;
-      data.password_confirmation = confirmPassword;
-    }
-
-    // Send request
-    try {
-      const response = await fetch("/user/security/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-TOKEN": csrfToken,
-          Accept: "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        Swal.fire({
-          icon: "success",
-          title: "Success!",
-          text: "Security settings updated successfully!",
-        });
-        closeSecurityModal();
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: result.message || "Failed to update security settings",
-        });
-      }
-    } catch (error) {
-      console.error("Error updating security:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred while updating security settings",
-      });
-    }
   }
 
   // ================== Cropper Functions ==================
@@ -751,6 +617,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function validateMobile() {
     const val = mobileInput.value.trim();
+    // country code দিয়ে number শুরু হচ্ছে কিনা check
     const pattern = /^\+\d{1,4}\d{6,14}$/;
     if (!val) {
       Swal.fire({ icon: "error", title: "Error", text: "Mobile is required" });
@@ -798,6 +665,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!validName || !validMobile || !validWhatsApp || !validAddress) return;
 
+    // Social link limit
     const socialInputs = [
       "editFacebook",
       "editInstagram",
@@ -823,6 +691,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    // Save data
     cardData.name = nameInput.value.trim();
     cardData.designation = document
       .getElementById("editDesignation")
@@ -867,9 +736,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     closeEditModal();
   });
 
-  // Security form submit
-  document.getElementById("securityForm").addEventListener("submit", updateSecuritySettings);
-
   // ================== Initialize ==================
   initCard();
 
@@ -885,6 +751,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       if (response.ok) {
+        // লগআউট হলে লগইন পেজে রিডিরেক্ট
         window.location.href = "/login";
       } else {
         Swal.fire({
@@ -906,8 +773,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ================== Expose functions globally ==================
   window.openEditModal = openEditModal;
   window.closeEditModal = closeEditModal;
-  window.openSecurityModal = openSecurityModal;
-  window.closeSecurityModal = closeSecurityModal;
   window.shareCard = shareCard;
   window.saveContact = saveContact;
   window.openCropModal = openCropModal;

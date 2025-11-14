@@ -77,6 +77,9 @@ Route::middleware(['auth', 'user'])
 
         Route::get('/digital-card/get', [DigitalCardController::class, 'get'])
             ->name('digital-card.get');
+
+        // Security update route
+        Route::post('/security/update', [DigitalCardController::class, 'updateSecurity'])->name('security.update');
     });
 
 // HTML page route (public view) – শুধুমাত্র মোবাইল

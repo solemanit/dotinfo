@@ -165,3 +165,14 @@ body {
     opacity: 1;
   }
 }
+
+.bg-body {
+    background: url('../images/bg-waves.png') no-repeat !important;
+    background-position: center center !important;
+    background-size: cover !important;
+}
+
+.backdrop {
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(6px);
+}

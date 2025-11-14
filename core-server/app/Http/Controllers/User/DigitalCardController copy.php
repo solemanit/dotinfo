@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Card;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 
@@ -163,83 +162,6 @@ class DigitalCardController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while fetching the card',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function updateSecurity(Request $request)
-    {
-        try {
-            $user = Auth::user();
-
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User not authenticated'
-                ], 401);
-            }
-
-            // Validate request
-            $validated = $request->validate([
-                'login_mobile' => 'nullable|string|max:50',
-                'login_email' => 'nullable|email|max:255|unique:users,login_email,' . $user->id,
-                'current_password' => 'nullable|required_with:password|string',
-                'password' => 'nullable|min:6|confirmed',
-            ]);
-
-            // Check if at least login_mobile or login_email is provided
-            if (empty($validated['login_mobile']) && empty($validated['login_email'])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Please provide at least Login Mobile or Login Email'
-                ], 422);
-            }
-
-            // Verify current password if changing password
-            if ($request->filled('current_password')) {
-                if (!Hash::check($request->current_password, $user->password)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Current password is incorrect'
-                    ], 422);
-                }
-            }
-
-            // Update login credentials
-            $updateData = [];
-
-            if ($request->filled('login_mobile')) {
-                $updateData['login_mobile'] = $validated['login_mobile'];
-            }
-
-            if ($request->filled('login_email')) {
-                $updateData['login_email'] = $validated['login_email'];
-            }
-
-            // Update password if provided
-            if ($request->filled('password') && $request->filled('current_password')) {
-                $updateData['password'] = Hash::make($validated['password']);
-            }
-
-            // Update user
-            $user->update($updateData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Security settings updated successfully'
-            ]);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while updating security settings',
                 'error' => $e->getMessage()
             ], 500);
         }
