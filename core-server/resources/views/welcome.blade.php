@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Laravel Multi-Auth System</title>
 </head>
-<body class="antialiased text-gray-100 bg-gradient-to-br from-indigo-600 to-purple-700">
+<body class="antialiased text-gray-100 bg-linear-to-br from-indigo-600 to-purple-700">
 
     <div class="flex flex-col justify-center min-h-screen">
         <div class="container px-6 py-16 mx-auto text-center">

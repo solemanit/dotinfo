@@ -3,7 +3,7 @@
 <div class="p-4 mb-4 bg-white rounded-lg shadow">
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-            <div class="flex items-center justify-center w-12 h-12 text-xl font-bold text-white rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
+            <div class="flex items-center justify-center w-12 h-12 text-xl font-bold text-white rounded-full bg-linear-to-r from-blue-500 to-purple-600">
                 {{ strtoupper(substr($user->name, 0, 1)) }}
             </div>
             <div>

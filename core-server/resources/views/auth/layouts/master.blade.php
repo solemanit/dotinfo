@@ -13,7 +13,8 @@
     <title>@yield('title', 'Digital Business Card')</title>
 
     {{-- Common Styles --}}
-    <link rel="stylesheet" href="{{ asset('main/css/main.css') }}">
+    <link rel="stylesheet" href="{{asset('main/css/main.css') }}">
+    <link rel="stylesheet" href="{{asset('main/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('main/css/icons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('main/css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('main/css/fonts.css') }}">
@@ -35,7 +36,6 @@
 
     {{-- Page Specific Scripts --}}
     @stack('scripts')
-    <script src="{{ asset('main/js/browser@4.js') }}"></script>
 </body>
 
 </html>

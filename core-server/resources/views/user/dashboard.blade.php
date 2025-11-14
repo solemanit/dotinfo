@@ -30,7 +30,7 @@
         </button>
 
         <div
-            class="relative flex flex-col items-center px-6 pt-24 pb-6 bg-gradient-to-b from-gray-800 via-gray-900 to-black">
+            class="relative flex flex-col items-center px-6 pt-24 pb-6 bg-linear-to-b from-gray-800 via-gray-900 to-black">
             <div class="-mt-10 overflow-hidden border-4 border-white rounded-full shadow-lg w-45 h-45">
                 <img id="profilePhoto" src="{{ asset('assets/images/avatar/dummy.png') }}" alt="Profile"
                     class="object-cover w-full h-full">
