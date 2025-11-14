@@ -38,6 +38,8 @@ class DigitalCardController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
+                'login_mobile' => 'nullable|string|max:255',
+                'login_email' => 'nullable|string|max:255',
                 'email' => 'nullable|email|max:255',
                 'mobile' => 'required|string|max:50',
                 'password' => 'nullable|string|min:6',

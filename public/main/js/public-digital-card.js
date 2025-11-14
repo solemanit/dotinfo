@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const items = [
       {
         k: "mobile",
-        i: "fas fa-mobile-alt",
+        i: "fa-regular fa-phone",
         l: cardData.contact.mobile,
         href: cardData.contact.mobile ? `tel:${cardData.contact.mobile}` : "",
       },
@@ -202,13 +202,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       },
       {
         k: "email",
-        i: "fas fa-envelope",
+        i: "fa-regular fa-at",
         l: cardData.contact.email,
         href: cardData.contact.email ? `mailto:${cardData.contact.email}` : "",
       },
       {
         k: "website",
-        i: "fas fa-link",
+        i: "fa-regular fa-link",
         l: cardData.contact.website,
         href: cardData.contact.website
           ? `https://${cardData.contact.website}`
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       },
       {
         k: "address",
-        i: "fas fa-map-marker-alt",
+        i: "fa-regular fa-map-marker-alt",
         l: cardData.contact.address,
         href: "",
       },

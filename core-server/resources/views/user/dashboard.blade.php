@@ -1,53 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('user.layouts.master')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="digital-card-get" content="{{ route('user.digital-card.get') }}">
-    <meta name="storage-path" content="{{ asset('storage') }}">
-    <meta name="default-avatar" content="{{ asset('assets/images/avatar/dummy.png') }}">
-    <title>Digital Business Card</title>
+@section('title', 'User Profile')
 
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
-        rel="stylesheet">
+@push('meta')
+<meta name="digital-card-get" content="{{ route('user.digital-card.get') }}">
+<meta name="storage-path" content="{{ asset('storage') }}">
+<meta name="default-avatar" content="{{ asset('main/images/dummy.png') }}">
+@endpush
 
-    <style>
-        html,
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            font-optical-sizing: auto;
-        }
+@push('styles')
+<link rel="stylesheet" href="{{ asset('main/css/cropper.min.css') }}">
+@endpush
 
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .cropper-container {
-            max-height: 70vh;
-        }
-    </style>
-</head>
-
-<body class="flex items-center justify-center h-screen p-0 bg-gray-100">
+@section('content')
     <div class="w-full h-full overflow-y-auto bg-white">
         <button onclick="openEditModal()"
             class="fixed z-50 flex items-center gap-2 px-4 py-2 text-sm transition rounded-lg shadow-lg text-dark-900 top-4 left-4 bg-white/90 backdrop-blur-sm hover:bg-white">
-            <i class="fas fa-edit"></i> Edit
+            <i class="fa-regular fa-pen-to-square"></i> Edit
         </button>
         <button onclick="logoutUser()"
             class="fixed z-50 px-4 py-2 text-sm transition rounded-lg shadow-lg text-dark-900 top-4 right-4 bg-white/90 backdrop-blur-sm hover:bg-white">
-            <i class="fas fa-sign-out-alt"></i> Logout
+            <i class="fa-regular fa-arrow-right-from-bracket"></i> Logout
         </button>
 
         <div
@@ -71,11 +44,11 @@
         </div>
 
         <div class="px-6 py-4">
-            <h2 class="mb-4 text-lg font-bold text-gray-900">Social networks</h2>
+            <h2 class="mb-4 text-lg font-bold text-gray-900">Social Networks</h2>
             <div id="socialLinks" class="flex justify-center gap-6 sm:justify-start"></div>
         </div>
         <div class="px-6 py-4 pb-8">
-            <h2 class="mb-4 text-lg font-bold text-gray-900">Contact info.</h2>
+            <h2 class="mb-4 text-lg font-bold text-gray-900">Contact Info</h2>
             <div id="contactInfo"></div>
         </div>
     </div>
@@ -269,9 +242,11 @@
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('assets/js/digital-card.js') }}"></script>
-</body>
+@endsection
 
-</html>
+@push('scripts')
+<script src="{{ asset('main/js/cropper.min.js') }}"></script>
+<script src="{{ asset('main/js/sweetalert2@11.js') }}"></script>
+<script src="{{ asset('main/js/digital-card.js') }}"></script>
+<script src="{{ asset('main/js/browser@4.js') }}"></script>
+@endpush
