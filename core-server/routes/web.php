@@ -56,7 +56,7 @@ Route::middleware(['auth', 'admin'])
     });
 
 // User Routes (মোবাইল এক্সেসের জন্য সীমাবদ্ধ)
-Route::middleware(['auth', 'user'])
+Route::middleware(['auth', 'user', 'mobile'])
     ->prefix('user')
     ->name('user.')
     ->group(function () {
@@ -83,7 +83,7 @@ Route::middleware(['auth', 'user'])
     });
 
 // HTML page route (public view) – শুধুমাত্র মোবাইল
-//Route::middleware(['mobile'])->group(function () {
+Route::middleware(['mobile'])->group(function () {
     Route::get('/view/{card_id}', function ($card_id) {
         abort_unless(preg_match('/^[0-9]{4}$/', $card_id), 404);
         $card = Card::where('card_id', $card_id)->firstOrFail();
@@ -99,7 +99,7 @@ Route::middleware(['auth', 'user'])
     // API endpoint
     Route::get('/api/card/{card_id}', [DigitalCardController::class, 'publicShow'])
         ->name('public.card.data');
-//});
+});
 
 Route::fallback(fn() => redirect()->route('login')->with('error', 'Page not found or access denied.'));
 
