@@ -10,19 +10,17 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create Admin User
+        // Active normal user
         User::create([
-            'name' => 'Admin User',
-            'login_email' => 'admin@example.com',
-            'login_mobile' => '01617960000',
-            'mobile' => '01617960000',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'is_active' => true,
-            'email_verified_at' => now(),
-            'country_code' => 'BD',
-            'country_name' => 'Bangladesh',
-            'registration_ip' => '127.0.0.1',
+            'name'           => 'Regular User',
+            'email'          => 'user@dotinfo.app',
+            'login_email'    => 'user@dotinfo.app',
+            'password'       => Hash::make('password'),
+            'role'           => 'user',
+            'is_active'      => true,
+            'country_code'   => 'BD',
+            'country_name'   => 'Bangladesh',
+            'registration_ip'=> '127.0.0.1',
         ]);
     }
 }

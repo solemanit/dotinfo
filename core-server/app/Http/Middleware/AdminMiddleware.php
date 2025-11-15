@@ -4,23 +4,30 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth('web')->check()) {
-            return redirect()->route('login')->with('error', 'Please login first.');
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('admin.login')
+                ->with('error', 'Please login as admin.');
         }
 
-        if (!auth('web')->user()->isActive()) {
-            auth()->logout();
-            return redirect()->route('login')->with('error', 'Your account is inactive.');
+        $admin = Auth::guard('admin')->user();
+
+        if (method_exists($admin, 'isActive') && !$admin->isActive()) {
+            Auth::guard('admin')->logout();
+            return redirect()->route('admin.login')
+                ->with('error', 'Your account has been deactivated.');
         }
 
-        if (!auth('web')->user()->isAdmin()) {
-            return redirect()->route('user.dashboard')->with('error', 'Unauthorized access.');
+        if (method_exists($admin, 'isAdmin') && !$admin->isAdmin()) {
+            Auth::guard('admin')->logout();
+            return redirect()->route('admin.login')
+                ->with('error', 'Unauthorized access.');
         }
 
         return $next($request);

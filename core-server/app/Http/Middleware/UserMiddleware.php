@@ -11,16 +11,21 @@ class UserMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (!auth('web')->check()) {
-            return redirect()->route('login')->with('error', 'Please login first.');
+            return redirect()->route('login')
+                ->with('error', 'Please login first.');
         }
 
-        if (!auth('web')->user()->isActive()) {
-            auth()->logout();
-            return redirect()->route('login')->with('error', 'Your account is inactive.');
+        $user = auth('web')->user();
+
+        if (method_exists($user, 'isActive') && !$user->isActive()) {
+            auth('web')->logout();
+            return redirect()->route('login')
+                ->with('error', 'Your account is inactive.');
         }
 
-        if (!auth('web')->user()->isUser()) {
-            return redirect()->route('admin.dashboard')->with('error', 'Unauthorized access.');
+        if (method_exists($user, 'isUser') && !$user->isUser()) {
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'Unauthorized access.');
         }
 
         return $next($request);

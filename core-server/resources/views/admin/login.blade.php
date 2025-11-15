@@ -1,34 +1,32 @@
-{{-- User Login --}}
+{{-- Admin Login --}}
 @extends('auth.layouts.master')
 
-@section('title', 'DotInfo | Login')
+@section('title', 'DotInfo | Admin Login')
 
 @section('content')
     <div class="w-full max-w-md">
         <div class="p-8 bg-white shadow-2xl rounded-2xl animate-fadeIn">
             <div class="mb-8 text-center">
-                <h2 class="text-2xl font-bold text-gray-900">Login Your Account</h2>
-                <p class="mt-2 text-gray-600">Sign in to access your dashboard</p>
+                <h2 class="text-2xl font-bold text-gray-900">Admin Login</h2>
+                <p class="mt-2 text-gray-600">Sign in to access admin dashboard</p>
             </div>
 
             {{-- Login Form --}}
-            <form method="POST" action="{{ route('login') }}" class="space-y-5">
+            <form method="POST" action="{{ route('admin.login') }}" class="space-y-5">
                 @csrf
 
-                {{-- Email/Mobile --}}
+                {{-- Email --}}
                 <div>
-                    <label class="block mb-1 text-sm font-medium text-gray-700">
-                        {{ session('is_bd_user') ? 'Email or Mobile' : 'Email Address' }}
-                    </label>
-                    <input type="text"
-                           name="login"
-                           value="{{ old('login') }}"
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email"
+                           name="email"
+                           value="{{ old('email') }}"
                            required
                            autofocus
-                           class="w-full px-4 py-3 border rounded-lg @error('login') border-red-500 @else border-gray-300 @enderror focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-                           placeholder="{{ session('is_bd_user') ? 'you@example.com or 01XXXXXXXXX' : 'you@example.com' }}">
+                           class="w-full px-4 py-3 border rounded-lg @error('email') border-red-500 @else border-gray-300 @enderror focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                           placeholder="admin@example.com">
 
-                    @error('login')
+                    @error('email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -63,20 +61,12 @@
                 @endif
 
                 {{-- Remember Me --}}
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input type="checkbox"
-                               name="remember"
-                               id="remember"
-                               class="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500">
-                        <label for="remember" class="ml-2 text-sm text-gray-600">Remember me</label>
-                    </div>
-
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="text-sm font-medium text-gray-600 hover:underline">
-                            Forgot password?
-                        </a>
-                    @endif
+                <div class="flex items-center">
+                    <input type="checkbox"
+                           name="remember"
+                           id="remember"
+                           class="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500">
+                    <label for="remember" class="ml-2 text-sm text-gray-600">Remember me</label>
                 </div>
 
                 {{-- Submit --}}
@@ -87,15 +77,12 @@
                 </button>
             </form>
 
-            {{-- Register Link --}}
-            @if (Route::has('register'))
-                <p class="mt-6 text-sm text-center text-gray-600">
-                    Don't have an account?
-                    <a href="{{ route('register') }}" class="font-medium text-gray-900 hover:underline">
-                        Sign up
-                    </a>
-                </p>
-            @endif
+            {{-- Back to Home --}}
+            <p class="mt-6 text-sm text-center text-gray-600">
+                <a href="{{ route('home') }}" class="font-medium text-gray-600 hover:underline">
+                    ← Back to Home
+                </a>
+            </p>
         </div>
     </div>
 @endsection

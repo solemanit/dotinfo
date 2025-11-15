@@ -56,7 +56,7 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    // Role checks
+    // Role Checks
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
@@ -72,55 +72,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->is_active;
     }
 
-    public function redirectToDashboard()
-    {
-        return $this->isAdmin() ? route('admin.dashboard') : route('user.dashboard');
-    }
-
-    // Relationship with Card
-    public function card()
-    {
-        return $this->hasOne(Card::class);
-    }
-    // ✅ Get full photo URL
-    public function getPhotoUrlAttribute()
-    {
-        if ($this->photo) {
-            return asset('storage/' . $this->photo);
-        }
-        return 'https://via.placeholder.com/300';
-    }
-
-    // ✅ Check if digital card has social links
-    public function hasSocialLinks(): bool
-    {
-        return collect([
-            $this->facebook,
-            $this->instagram,
-            $this->linkedin,
-            $this->twitter,
-            $this->youtube,
-            $this->tiktok,
-            $this->pinterest,
-            $this->telegram,
-            $this->snapchat,
-            $this->github,
-        ])->filter()->isNotEmpty();
-    }
-
-    // ✅ Check if digital card has contact info
-    public function hasContactInfo(): bool
-    {
-        return collect([
-            $this->website,
-            $this->mobile,
-            $this->email,
-            $this->whatsapp,
-            $this->address,
-        ])->filter()->isNotEmpty();
-    }
-
-    // Country helpers
+    // Country Helpers
     public function isBangladeshi(): bool
     {
         return $this->country_code === 'BD';
@@ -136,30 +88,56 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->isForeign() && !$this->hasVerifiedEmail();
     }
 
-     /**
-     * Scope for active users
-     */
+    // Relationships
+    public function card()
+    {
+        return $this->hasOne(Card::class);
+    }
+
+    // Accessors
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo
+            ? asset('storage/' . $this->photo)
+            : 'https://via.placeholder.com/300';
+    }
+
+    // Social & Contact Checks
+    public function hasSocialLinks(): bool
+    {
+        return collect([
+            $this->facebook, $this->instagram, $this->linkedin,
+            $this->twitter, $this->youtube, $this->tiktok,
+            $this->pinterest, $this->telegram, $this->snapchat,
+            $this->github,
+        ])->filter()->isNotEmpty();
+    }
+
+    public function hasContactInfo(): bool
+    {
+        return collect([
+            $this->website, $this->mobile, $this->email,
+            $this->whatsapp, $this->address,
+        ])->filter()->isNotEmpty();
+    }
+
+    // Scopes
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
     }
 
-    /**
-     * Scope for admin users
-     */
     public function scopeAdmins($query)
     {
         return $query->where('role', 'admin');
     }
 
-    /**
-     * Scope for regular users
-     */
     public function scopeRegularUsers($query)
     {
         return $query->where('role', 'user');
     }
 
+    // Notifications
     public function sendEmailVerificationNotification()
     {
         $this->notify(new CustomVerifyEmail());
